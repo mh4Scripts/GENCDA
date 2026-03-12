@@ -10,13 +10,15 @@ from sklearn.tree import DecisionTreeRegressor
 
 class RelatedDataframe:
 
-    def __init__(self, df, dag, ensemble_regression=[DecisionTreeRegressor(), SVR(),
-                                                     KNeighborsRegressor(), GaussianProcessRegressor()]):
+    def __init__(self, df, dag, ensemble_regression=None):
         self.df = df
         self.n_sample = len(df)
         self.graph = dag
         self._values = {}
         self.dataframe = None
+        if ensemble_regression is None:
+            ensemble_regression = [DecisionTreeRegressor(), SVR(),
+                                   KNeighborsRegressor(), GaussianProcessRegressor()]
         self.ensemble_regression = ensemble_regression
 
     def regressor(self, independent_cols, dependent_col):

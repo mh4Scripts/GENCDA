@@ -180,7 +180,6 @@ class NonlinearANM:
                 return False, -1
 
         model = GaussianProcessRegressor().fit(x_train, y_train)
-        model.fit(x_train, y_train)
         residuals = y_test - model.predict(x_test)
 
         if mutual:

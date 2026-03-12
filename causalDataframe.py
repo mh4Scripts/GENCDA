@@ -15,7 +15,7 @@ class CausalDataFrame:
     with nodes corresponding to variables and edges representing causal relationships.
     """
 
-    def __init__(self, n_points, graph_data, isolated_nodes=[],
+    def __init__(self, n_points, graph_data, isolated_nodes=None,
                  possible_unary_functions=UNARY_FUNCTIONS,
                  possible_binary_functions=BINARY_FUNCTIONS, distributions=DISTRIBUTIONS):
         """
@@ -26,7 +26,7 @@ class CausalDataFrame:
             container (e.g. set, list, tuple) of edges, iterator (e.g. itertools.chain) that produces edges,
             generator of edges, Pandas DataFrame (row per edge)
             numpy matrix, numpy ndarray, scipy sparse matrix, pygraphviz agraph
-        :param isolated_nodes: list, default = []
+        :param isolated_nodes: list, default = None
              vertex with degree zero.
              If you initialize "graph_data" using only edges, the networkx function generates
              exclusively connected components. In this case, you have to insert the list of isolated nodes
@@ -39,6 +39,8 @@ class CausalDataFrame:
                                                 np.random.lognormal, np.random.chisquare, np.random.beta)
             list of distribution to generate independent column
         """
+        if isolated_nodes is None:
+            isolated_nodes = []
 
         self.n_sample = n_points
         self.possible_unary_functions = possible_unary_functions

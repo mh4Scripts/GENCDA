@@ -94,14 +94,14 @@ def hoeffding(*arg):
             dicoSless = {np.nan: np.nan}
             Q = np.ones(N[0])
 
-            i = 0;
+            i = 0
             for r, s in np.nditer([R, S]):
                 r = float(r)
                 s = float(s)
-                if (r, s) in dico.keys():
+                if (r, s) in dico:
                     Q[i] = dico[(r, s)]
                 else:
-                    if r in dicoRin.keys():
+                    if r in dicoRin:
                         isinR = dicoRin[r]
                         lessR = dicoRless[r]
                     else:
@@ -110,7 +110,7 @@ def hoeffding(*arg):
                         lessR = np.less(R, r)
                         dicoRless[r] = lessR
 
-                    if s in dicoSin.keys():
+                    if s in dicoSin:
                         isinS = dicoSin[s]
                         lessS = dicoSless[s]
                     else:
@@ -126,12 +126,12 @@ def hoeffding(*arg):
                     dico[(r, s)] = Q[i]
                 i += 1
 
-            D1 = np.sum(np.multiply((Q - 1), (Q - 2)));
-            D2 = np.sum(np.multiply(np.multiply((R - 1), (R - 2)), np.multiply((S - 1), (S - 2))));
-            D3 = np.sum(np.multiply(np.multiply((R - 2), (S - 2)), (Q - 1)));
+            D1 = np.sum(np.multiply((Q - 1), (Q - 2)))
+            D2 = np.sum(np.multiply(np.multiply((R - 1), (R - 2)), np.multiply((S - 1), (S - 2))))
+            D3 = np.sum(np.multiply(np.multiply((R - 2), (S - 2)), (Q - 1)))
 
             D = 30 * ((N[0] - 2) * (N[0] - 3) * D1 + D2 - 2 * (N[0] - 2) * D3) / (
-                        N[0] * (N[0] - 1) * (N[0] - 2) * (N[0] - 3) * (N[0] - 4));
+                        N[0] * (N[0] - 1) * (N[0] - 2) * (N[0] - 3) * (N[0] - 4))
 
             return D
         return print("ERROR inputs : hoeffding(df >2col) or hoeffding(numpy.array -1d- ,numpy.array -1d-)")

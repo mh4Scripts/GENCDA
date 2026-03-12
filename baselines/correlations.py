@@ -1,16 +1,17 @@
 from itertools import combinations
-import networkx as nx
 
+import networkx as nx
+import pandas as pd
 from scipy.stats import spearmanr, pearsonr
 
 from baselines.XtendendCorr import *
 from utils import check_relations_founded
 
 
-class Correlation(object):
+class Correlation:
 
     def __init__(self):
-        super(Correlation, self).__init__()
+        super().__init__()
         self.metrics = None
 
     @staticmethod
@@ -66,7 +67,7 @@ class Correlation(object):
         else:
             return pd.DataFrame.from_dict(correlations)
 
-    def evaluate(self, df, graph, p_value=0.05, thresold=0.03):
+    def evaluate(self, df, graph, p_value=0.05, threshold=0.03):
         """
         Compute and evaluate these correlation metrics: pearson, spearman, hoeffding.
         Evaluation of pearson and spearman: p_value
@@ -79,7 +80,7 @@ class Correlation(object):
         :param df: pandas DataFrame
         :param graph: networkx.DiGraph
         :param p_value: default = 0.05
-        :param thresold: test threshold for Hoeffding's D
+        :param threshold: test threshold for Hoeffding's D
         :return: correlations list, confusion matrix of correlations founded wrt original graph
 
 
@@ -99,7 +100,7 @@ class Correlation(object):
                     result.append(columns_names)
             else:
                 hoeff_corr = df.iloc[0, column]
-                if hoeff_corr >= thresold:
+                if hoeff_corr >= threshold:
                     columns_names = df.iloc[:, column].name
                     result.append(columns_names)
 
