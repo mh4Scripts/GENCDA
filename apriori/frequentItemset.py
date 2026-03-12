@@ -1,10 +1,17 @@
 import os
 import re
 from collections import defaultdict
+from itertools import combinations
 
 import pandas as pd
-from fim import apriori
 from sklearn.preprocessing import KBinsDiscretizer
+
+try:
+    from fim import apriori as _fim_apriori
+    _USE_FIM = True
+except ImportError:
+    from efficient_apriori import apriori as _ea_apriori
+    _USE_FIM = False
 
 
 class Apriori:
@@ -63,12 +70,64 @@ class Apriori:
 
         return discretized_df
 
+    @staticmethod
+    def _filter_maximal(itemsets):
+        """Keep only maximal itemsets (no proper subset of another)."""
+        sorted_sets = sorted(itemsets, key=len, reverse=True)
+        maximals = []
+        for s in sorted_sets:
+            if not any(s < m for m in maximals):
+                maximals.append(s)
+        return maximals
+
+    def _run_apriori(self, baskets):
+        """Run apriori using fim (Borgelt) or efficient_apriori as fallback."""
+        if _USE_FIM:
+            return _fim_apriori(baskets, supp=self.support, zmax=self.zmax,
+                                target=self.target, report='as')
+
+        # efficient_apriori: support is a fraction (0-1), not percentage
+        min_support = self.support / 100.0
+        itemsets_dict, _ = _ea_apriori(
+            [tuple(b) for b in baskets],
+            min_support=min_support,
+            max_length=self.zmax
+        )
+        # Convert to list of (frozenset, support_count) matching fim format
+        n_baskets = len(baskets)
+        result = []
+        for size, items in itemsets_dict.items():
+            if size < 2:
+                continue
+            for itemset_tuple, count in items.items():
+                result.append((frozenset(itemset_tuple), count / n_baskets * 100))
+
+        # Post-filter for target type
+        if self.target == 'm':
+            frozensets = [r[0] for r in result]
+            maximal = self._filter_maximal(frozensets)
+            result = [(fs, sup) for fs, sup in result if fs in maximal]
+        elif self.target == 'c':
+            # closed: keep itemsets whose support is strictly greater than all supersets
+            support_map = {r[0]: r[1] for r in result}
+            closed = []
+            for fs, sup in result:
+                is_closed = True
+                for other_fs, other_sup in result:
+                    if fs < other_fs and sup == other_sup:
+                        is_closed = False
+                        break
+                if is_closed:
+                    closed.append((fs, sup))
+            result = closed
+
+        return result
+
     def fit(self):
 
         itemsets_with_max_support = set()
         discretized_df = self._discretizer()
-        itemsets = apriori(self._baskets(discretized_df), supp=self.support, zmax=self.zmax,
-                           target=self.target, report='as')
+        itemsets = self._run_apriori(self._baskets(discretized_df))
         ordered_itemsets = sorted(itemsets, key=lambda tup: tup[1], reverse=True)
 
         if len(ordered_itemsets) != 0:
