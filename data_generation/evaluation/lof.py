@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.neighbors import LocalOutlierFactor
-from utils import AutoVivification
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -27,7 +26,7 @@ def lof(dataframe1, dataframe2, n_neighbors=10):
         The lower, the more abnormal.
         Negative scores represent outliers, positive scores represent inliers.
     """
-    result = AutoVivification()
+    result = {}
     clf = LocalOutlierFactor(n_neighbors=n_neighbors, novelty=True)
     # Fit on causal dataframe
     clf.fit(dataframe1.values)

@@ -5,7 +5,6 @@ from itertools import combinations
 from itertools import product
 
 import matplotlib.pyplot as plt
-import networkx as netx
 import networkx as nx
 import numpy as np
 from networkx.readwrite import json_graph
@@ -130,16 +129,13 @@ def show_dependency(results, columns, show=True):
 
 
 def graph_labels(columns):
-    labels = dict()
-    for i, column in enumerate(columns):
-        labels[i] = column
-    return labels
+    return {i: column for i, column in enumerate(columns)}
 
 
 def show_graph(result, labels):
     for matrix in result:
-        gr = netx.from_numpy_array(matrix, create_using=netx.DiGraph())
-        netx.draw_networkx(gr, with_labels=True, labels=labels, node_size=600)
+        gr = nx.from_numpy_array(matrix, create_using=nx.DiGraph())
+        nx.draw_networkx(gr, with_labels=True, labels=labels, node_size=600)
         plt.show()
 
 
@@ -292,11 +288,7 @@ def delete_cycle(causal_relations_found, graph):
 
 
 def createFolder(path):
-    try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-    except OSError:
-        print('Error: Creating directory. ' + path)
+    os.makedirs(path, exist_ok=True)
 
 
 def randomDag(path, n_nodes=5, n_edges=2):

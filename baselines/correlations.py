@@ -7,10 +7,10 @@ from baselines.XtendendCorr import *
 from utils import check_relations_founded
 
 
-class Correlation(object):
+class Correlation:
 
     def __init__(self):
-        super(Correlation, self).__init__()
+        super().__init__()
         self.metrics = None
 
     @staticmethod

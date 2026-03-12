@@ -19,10 +19,8 @@ def kmeans(causal_df, kmax=10):
     sse = []
     kmeans_class = {}
     for k in range(2, kmax + 1):
-        if k not in kmeans_class:
-            kmeans_class[k] = None
         # Compute clustering
-        kmeans = KMeans(n_clusters=k).fit(scaled_data)
+        kmeans = KMeans(n_clusters=k, n_init=10).fit(scaled_data)
         # Sum of squared distances of samples to their closest cluster center
         sse.append(kmeans.inertia_)
         # Save fitting results and sse
