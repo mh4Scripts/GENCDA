@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import warnings
 
 
-class Distribution(object):
+class Distribution:
 
-    def __init__(self, dist_names_list=[]):
+    def __init__(self, dist_names_list=None):
         self.dist_names = ['norm', 'lognorm', 'uniform', 'exponweib', 'expon',
                            'gamma', 'beta', 'alpha', 'chi', 'chi2', 'laplace', 'powerlaw']
         self.dist_results = []
@@ -84,7 +84,7 @@ class Distribution(object):
 
             self.params[dist_name] = param
             # Applying the Kolmogorov-Smirnov test
-            D, p = scipy.stats.kstest(y, dist_name, args=param);
+            D, p = scipy.stats.kstest(y, dist_name, args=param)
             self.dist_results.append((dist_name, p))
 
         # select the best fitted distribution

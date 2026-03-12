@@ -1,8 +1,7 @@
 import json
 import os
 import re
-from itertools import combinations
-from itertools import product
+from itertools import combinations, product
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -188,7 +187,7 @@ def evaluation_measures(confusion_matrix):
         f1 = 2 * (recall * precision) / (recall + precision)
 
         return precision, recall, accuracy, f1
-    except Exception:
+    except ZeroDivisionError:
         print('some element of the confusion matrix is equal to zero so the function cannot be applied.')
 
 
