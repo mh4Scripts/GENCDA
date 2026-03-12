@@ -138,7 +138,7 @@ def graph_labels(columns):
 
 def show_graph(result, labels):
     for matrix in result:
-        gr = netx.from_numpy_matrix(matrix, create_using=netx.DiGraph())
+        gr = netx.from_numpy_array(matrix, create_using=netx.DiGraph())
         netx.draw_networkx(gr, with_labels=True, labels=labels, node_size=600)
         plt.show()
 

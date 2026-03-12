@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KernelDensity
 
@@ -51,7 +51,7 @@ def get_statistics(dataframe, dataframe1, linspace_samples=100):
         pdf2 = np.exp(kde2.score_samples(x_grid))
 
         # RMSE
-        rmse.append(mean_squared_error(pdf1, pdf2, squared=False))
+        rmse.append(root_mean_squared_error(pdf1, pdf2))
         # SSE
         sse.append(np.sum(np.power(pdf1 - pdf2, 2.0)))
 
@@ -95,7 +95,7 @@ def plotKDE(column1, column2, label1='Original Data', label2='GENCDA'):
     plt.plot(x_grid[:, 0], pdf1, linewidth=2, label=label1)
     plt.plot(x_grid[:, 0], pdf2, linewidth=2, label=label2)
 
-    plt.title(f'RMSE: {mean_squared_error(pdf1, pdf2, squared=False)},'
+    plt.title(f'RMSE: {root_mean_squared_error(pdf1, pdf2)},'
                  f' SSE: {np.sum(np.power(pdf1 - pdf2, 2.0))}')
     plt.legend(fontsize=13)
     plt.show()
