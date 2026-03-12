@@ -98,8 +98,9 @@ def hsic_gam(X, Y):
 
     mHSIC = (1 + muX * muY - muX - muY) / n
 
-    al = mHSIC ** 2 / varHSIC
-    bet = varHSIC * n / mHSIC
+    al = np.squeeze(mHSIC ** 2 / varHSIC).item()
+    bet = np.squeeze(varHSIC * n / mHSIC).item()
+    testStat = float(testStat)
 
     p_value = float(1 - gamma(al, scale=bet).cdf(testStat))
 

@@ -40,11 +40,11 @@ class NonlinearANM:
             var1, var2 = self.y, self.x
         # Instantiate a Gaussian Process model and
         # fit to data using Maximum Likelihood Estimation of the parameters
-        model = GaussianProcessRegressor(kernel=kernel).fit(var1, var2)
+        model = GaussianProcessRegressor(kernel=kernel).fit(var1, var2.ravel())
         # Calculate the the corresponding residual n = y - f(x)
-        residuals = var2 - model.predict(var1)
+        residuals = var2.ravel() - model.predict(var1)
         # Statistical test of independence between residuals and independent variable
-        return model, residuals, hsic_gam(residuals, var1)
+        return model, residuals.reshape(-1, 1), hsic_gam(residuals.reshape(-1, 1), var1)
 
     def fit_bivariate(self, idx_var1, idx_var2, kernel=None):
         """
@@ -107,24 +107,30 @@ class NonlinearANM:
 
         f, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
-        # Plot the function, the prediction and the 95% confidence interval based on the MSE
-        x_pred = np.linspace(min(variable1), max(variable1), 1000).reshape(-1, 1)
-        y_pred, sigma = model.predict(x_pred, return_std=True)
-        sigma = sigma.reshape(-1, 1)
+        # Flatten all inputs to 1D for plotting
+        v1 = np.ravel(variable1)
+        v2 = np.ravel(variable2)
+        res = np.ravel(residuals)
 
-        ax1.plot(variable1, variable2, 'r.', markersize=5, label='Observations')
-        ax1.plot(x_pred, y_pred, 'b-', label='Prediction')
-        ax1.fill_between(x_pred.reshape(-1),
-                         np.reshape(y_pred - 1.9600 * sigma, -1),
-                         np.reshape(y_pred + 1.9600 * sigma, -1),
+        # Plot the function, the prediction and the 95% confidence interval based on the MSE
+        x_pred = np.linspace(v1.min(), v1.max(), 1000).reshape(-1, 1)
+        y_pred, sigma = model.predict(x_pred, return_std=True)
+        y_pred = np.ravel(y_pred)
+        sigma = np.ravel(sigma)
+
+        ax1.plot(v1, v2, 'r.', markersize=5, label='Observations')
+        ax1.plot(x_pred.ravel(), y_pred, 'b-', label='Prediction')
+        ax1.fill_between(x_pred.ravel(),
+                         y_pred - 1.9600 * sigma,
+                         y_pred + 1.9600 * sigma,
                          alpha=.5, label='95% confidence interval')
         ax1.set_xlabel(name_var1)
         ax1.set_ylabel(name_var2)
 
         # Plot residuals
-        ax2.scatter(variable1, residuals)
+        ax2.scatter(v1, res)
         ax2.set_xlabel(name_var1)
-        ax2.set_ylabel('Residuals of' + name_var1)
+        ax2.set_ylabel('Residuals of ' + name_var1)
         return
 
     def show_plots(self):

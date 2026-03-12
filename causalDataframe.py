@@ -4,7 +4,7 @@ import random
 from utils import *
 
 UNARY_FUNCTIONS = (np.sin, sqrt, square, log, np.tan, np.cos)
-BINARY_FUNCTIONS = (sum, product, difference, division)
+BINARY_FUNCTIONS = (sum, multiplication, difference, division)
 DISTRIBUTIONS = (np.random.uniform, np.random.normal, np.random.exponential, np.random.lognormal, np.random.chisquare,
                  np.random.beta)
 

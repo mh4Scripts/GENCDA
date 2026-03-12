@@ -46,9 +46,9 @@ class RelatedDataframe:
             dst = Distribution()
             dst.Fit(self.df[node])
             column = dst.Random(self.n_sample)
-            #dst.Plot(self.df[node])
-            # plt.show()
-            column = feature_scaled.inverse_transform(column)
+            column = feature_scaled.inverse_transform(
+                np.asarray(column).reshape(-1, 1)
+            ).ravel()
 
         else:
             column = self.regressor(self.df[parents_list].values, self.df[node].values)
